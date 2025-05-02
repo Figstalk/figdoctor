@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>หมอฟิกส์ FigDoctor</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-green-50 text-gray-900 font-sans">
+  <div class="min-h-screen flex items-center justify-center p-4">
+    <div class="bg-white shadow-xl rounded-2xl p-6 w-full max-w-md">
+      <h1 class="text-2xl font-bold text-green-700 mb-4 text-center">หมอฟิกส์ FigDoctor</h1>
+      <p class="mb-4 text-center text-sm text-gray-600">ระบบช่วยวิเคราะห์โรคมะเดื่อฝรั่งจากภาพถ่าย</p>
+
+      <form id="uploadForm">
+        <input type="file" name="file" accept="image/*" class="block w-full mb-4 text-sm text-gray-700" required />
+        <button type="submit" class="w-full bg-green-600 hover:bg-green-700 text-white py-2 rounded-xl font-semibold">อัปโหลดภาพเพื่อวิเคราะห์</button>
+      </form>
+
+      <div id="result" class="mt-6 text-center text-sm text-gray-700"></div>
+    </div>
+  </div>
+
+  <script>
+    const form = document.getElementById('uploadForm');
+    const result = document.getElementById('result');
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      const formData = new FormData(form);
+      result.textContent = 'กำลังวิเคราะห์ภาพ กรุณารอสักครู่...';
+
+      try {
+        const response = await fetch('http://127.0.0.1:8000/predict/', {
+          method: 'POST',
+          body: formData,
+        });
+
+        const data = await response.json();
+        result.innerHTML = `<strong>ผลการวิเคราะห์:</strong> ${data.result}`;
+      } catch (error) {
+        result.textContent = 'เกิดข้อผิดพลาดในการวิเคราะห์ กรุณาลองใหม่';
+      }
+    });
+  </script>
+</body>
+</html>
+
